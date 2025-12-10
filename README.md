@@ -27,7 +27,7 @@ Uma API FastAPI completa para gerenciamento de estoque com suporte a múltiplas 
 
 ```bash
 # Clonar repositório
-git clone [<repo-url>](https://github.com/Kelvinl14/Systock-api?tab=readme-ov-file)
+git clone https://github.com/Kelvinl14/Systock-api
 cd systock-api
 
 # Criar ambiente virtual
