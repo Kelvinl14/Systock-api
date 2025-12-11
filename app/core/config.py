@@ -8,7 +8,7 @@ class Settings(BaseSettings):
     """Configurações da aplicação."""
     
     # Database
-    database_url: str = "postgresql+psycopg2://postgres:postgres@localhost:5432/systock"
+    database_url: str
     
     # API
     api_title: str = "Systock API"
