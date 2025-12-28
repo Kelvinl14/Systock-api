@@ -31,6 +31,28 @@ def list_products(
     
     return query.offset(skip).limit(limit).all()
 
+@router.get("/all", response_model=list[ProductRead])
+def list_products(
+    db: Session = Depends(get_db),
+    skip: int = Query(0, ge=0),
+    name: str | None = None,
+    category_id: int | None = None,
+    active: bool | None = None,
+):
+    """Lista todos os produtos sem limite com filtros opcionais."""
+    query = db.query(Product)
+    
+    if name:
+        query = query.filter(Product.name.ilike(f"%{name}%"))
+    
+    if category_id:
+        query = query.filter(Product.category_id == category_id)
+    
+    if active is not None:
+        query = query.filter(Product.active == active)
+    
+    return query.offset(skip).all()
+
 
 @router.get("/{product_id}", response_model=ProductRead)
 def get_product(product_id: int, db: Session = Depends(get_db)):
