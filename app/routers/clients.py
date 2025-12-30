@@ -23,6 +23,20 @@ def list_clients(
     
     return query.offset(skip).limit(limit).all()
 
+@router.get("/all", response_model=list[ClientRead])
+def list_clients_all(
+    db: Session = Depends(get_db),
+    skip: int = Query(0, ge=0),
+    name: str | None = None,
+):
+    """Lista todos os clientes sem limite com filtros opcionais."""
+    query = db.query(Client)
+    
+    if name:
+        query = query.filter(Client.name.ilike(f"%{name}%"))
+    
+    return query.offset(skip).all()
+
 
 @router.get("/{client_id}", response_model=ClientRead)
 def get_client(client_id: int, db: Session = Depends(get_db)):

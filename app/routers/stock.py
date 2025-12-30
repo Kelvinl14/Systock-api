@@ -27,6 +27,25 @@ def list_stock(
     
     return query.offset(skip).limit(limit).all()
 
+@router.get("/all", response_model=list[StockStoreRead])
+def list_stock_all(
+    db: Session = Depends(get_db),
+    skip: int = Query(0, ge=0),
+    limit: int = Query(10, ge=1, le=100),
+    store_id: int | None = None,
+    product_id: int | None = None,
+):
+    """Lista estoque sem limite com filtros opcionais."""
+    query = db.query(StockStore)
+    
+    if store_id:
+        query = query.filter(StockStore.store_id == store_id)
+    
+    if product_id:
+        query = query.filter(StockStore.product_id == product_id)
+    
+    return query.offset(skip).all()
+
 
 @router.get("/{stock_id}", response_model=StockStoreRead)
 def get_stock(stock_id: int, db: Session = Depends(get_db)):

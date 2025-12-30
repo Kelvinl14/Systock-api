@@ -35,6 +35,32 @@ def list_movements(
     
     return query.order_by(StockMovement.movement_date.desc()).offset(skip).limit(limit).all()
 
+@router.get("/all", response_model=list[StockMovementRead])
+def list_movements_all(
+    db: Session = Depends(get_db),
+    skip: int = Query(0, ge=0),
+    product_id: int | None = None,
+    store_id: int | None = None,
+    movement_type: str | None = None,
+    reference_type: str | None = None,
+):
+    """Lista movimentações de estoque sem limite com filtros opcionais."""
+    query = db.query(StockMovement)
+    
+    if product_id:
+        query = query.filter(StockMovement.product_id == product_id)
+    
+    if store_id:
+        query = query.filter(StockMovement.store_id == store_id)
+    
+    if movement_type:
+        query = query.filter(StockMovement.movement_type == movement_type)
+    
+    if reference_type:
+        query = query.filter(StockMovement.reference_type == reference_type)
+    
+    return query.order_by(StockMovement.movement_date.desc()).offset(skip).all()
+
 
 @router.get("/{movement_id}", response_model=StockMovementRead)
 def get_movement(movement_id: int, db: Session = Depends(get_db)):

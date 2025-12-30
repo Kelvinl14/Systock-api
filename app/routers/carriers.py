@@ -23,6 +23,20 @@ def list_carriers(
     
     return query.offset(skip).limit(limit).all()
 
+@router.get("/all", response_model=list[CarrierRead])
+def list_carriers_all(
+    db: Session = Depends(get_db),
+    skip: int = Query(0, ge=0),
+    name: str | None = None,
+):
+    """Lista todas as transportadoras sem limite com filtros opcionais."""
+    query = db.query(Carrier)
+    
+    if name:
+        query = query.filter(Carrier.name.ilike(f"%{name}%"))
+    
+    return query.offset(skip).all()
+
 
 @router.get("/{carrier_id}", response_model=CarrierRead)
 def get_carrier(carrier_id: int, db: Session = Depends(get_db)):

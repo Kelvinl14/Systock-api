@@ -32,6 +32,28 @@ def list_sales(
     
     return query.offset(skip).limit(limit).all()
 
+@router.get("/all", response_model=list[SaleRead])
+def list_sales_all(
+    db: Session = Depends(get_db),
+    skip: int = Query(0, ge=0),
+    client_id: int | None = None,
+    store_id: int | None = None,
+    status: str | None = None,
+):
+    """Lista vendas sem limite com filtros opcionais."""
+    query = db.query(Sale)
+    
+    if client_id:
+        query = query.filter(Sale.client_id == client_id)
+    
+    if store_id:
+        query = query.filter(Sale.store_id == store_id)
+    
+    if status:
+        query = query.filter(Sale.status == status)
+    
+    return query.offset(skip).all()
+
 
 @router.get("/{sale_id}", response_model=SaleRead)
 def get_sale(sale_id: int, db: Session = Depends(get_db)):

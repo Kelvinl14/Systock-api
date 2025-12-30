@@ -28,6 +28,24 @@ def list_entries(
     
     return query.offset(skip).limit(limit).all()
 
+@router.get("/all", response_model=list[ProductEntryRead])
+def list_entries_all(
+    db: Session = Depends(get_db),
+    skip: int = Query(0, ge=0),
+    supplier_id: int | None = None,
+    status: str | None = None,
+):
+    """Lista entradas de produtos sem limite com filtros opcionais."""
+    query = db.query(ProductEntry)
+    
+    if supplier_id:
+        query = query.filter(ProductEntry.supplier_id == supplier_id)
+    
+    if status:
+        query = query.filter(ProductEntry.status == status)
+    
+    return query.offset(skip).all()
+
 
 @router.get("/{entry_id}", response_model=ProductEntryRead)
 def get_entry(entry_id: int, db: Session = Depends(get_db)):

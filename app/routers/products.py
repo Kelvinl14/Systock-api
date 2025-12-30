@@ -32,7 +32,7 @@ def list_products(
     return query.offset(skip).limit(limit).all()
 
 @router.get("/all", response_model=list[ProductRead])
-def list_products(
+def list_products_all(
     db: Session = Depends(get_db),
     skip: int = Query(0, ge=0),
     name: str | None = None,

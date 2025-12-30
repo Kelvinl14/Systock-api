@@ -32,6 +32,28 @@ def list_distributions(
     
     return query.offset(skip).limit(limit).all()
 
+@router.get("/all", response_model=list[InternalDistributionRead])
+def list_distributions_all(
+    db: Session = Depends(get_db),
+    skip: int = Query(0, ge=0),
+    from_store_id: int | None = None,
+    to_store_id: int | None = None,
+    status: str | None = None,
+):
+    """Lista distribuições internas sem limite com filtros opcionais."""
+    query = db.query(InternalDistribution)
+    
+    if from_store_id:
+        query = query.filter(InternalDistribution.from_store_id == from_store_id)
+    
+    if to_store_id:
+        query = query.filter(InternalDistribution.to_store_id == to_store_id)
+    
+    if status:
+        query = query.filter(InternalDistribution.status == status)
+    
+    return query.offset(skip).all()
+
 
 @router.get("/{distribution_id}", response_model=InternalDistributionRead)
 def get_distribution(distribution_id: int, db: Session = Depends(get_db)):

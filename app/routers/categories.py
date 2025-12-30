@@ -23,6 +23,20 @@ def list_categories(
     
     return query.offset(skip).limit(limit).all()
 
+@router.get("/all", response_model=list[CategoryRead])
+def list_categories_all(
+    db: Session = Depends(get_db),
+    skip: int = Query(0, ge=0),
+    name: str | None = None,
+):
+    """Lista todas as categorias sem limite com filtros opcionais."""
+    query = db.query(Category)
+    
+    if name:
+        query = query.filter(Category.name.ilike(f"%{name}%"))
+    
+    return query.offset(skip).all()
+
 
 @router.get("/{category_id}", response_model=CategoryRead)
 def get_category(category_id: int, db: Session = Depends(get_db)):

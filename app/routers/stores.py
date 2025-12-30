@@ -23,6 +23,20 @@ def list_stores(
     
     return query.offset(skip).limit(limit).all()
 
+@router.get("/all", response_model=list[StoreRead])
+def list_stores_all(
+    db: Session = Depends(get_db),
+    skip: int = Query(0, ge=0),
+    name: str | None = None,
+):
+    """Lista todas as lojas sem limite com filtros opcionais."""
+    query = db.query(Store)
+    
+    if name:
+        query = query.filter(Store.name.ilike(f"%{name}%"))
+    
+    return query.offset(skip).all()
+
 
 @router.get("/{store_id}", response_model=StoreRead)
 def get_store(store_id: int, db: Session = Depends(get_db)):
